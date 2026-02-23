@@ -1,0 +1,159 @@
+version: '3.9'
+
+services:
+  mongo-auth:
+    image: mongo:7
+    container_name: mongo-auth
+    ports: ["27017:27017"]
+    volumes: [mongo-auth-data:/data/db]
+    networks: [app-network]
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo-student:
+    image: mongo:7
+    container_name: mongo-student
+    ports: ["27018:27017"]
+    volumes: [mongo-student-data:/data/db]
+    networks: [app-network]
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo-notification:
+    image: mongo:7
+    container_name: mongo-notification
+    ports: ["27019:27017"]
+    volumes: [mongo-notification-data:/data/db]
+    networks: [app-network]
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports: ["6379:6379"]
+    networks: [app-network]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    networks: [app-network]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports: ["3001:3001"]
+    environment:
+      PORT: 3001
+      NODE_ENV: production
+      MONGO_URI: mongodb://mongo-auth:27017/auth_db
+      JWT_SECRET: super_secret_jwt_change_in_production_32chars
+      JWT_REFRESH_SECRET: super_refresh_secret_change_in_prod_32c
+      JWT_EXPIRES_IN: 15m
+      JWT_REFRESH_EXPIRES_IN: 7d
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://admin:admin123@rabbitmq:5672
+      BCRYPT_ROUNDS: 12
+    depends_on:
+      mongo-auth:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks: [app-network]
+    restart: unless-stopped
+
+  student-service:
+    build: ./student-service
+    container_name: student-service
+    ports: ["3002:3002"]
+    environment:
+      PORT: 3002
+      NODE_ENV: production
+      MONGO_URI: mongodb://mongo-student:27017/student_db
+      JWT_SECRET: super_secret_jwt_change_in_production_32chars
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://admin:admin123@rabbitmq:5672
+      CACHE_TTL: 300
+    depends_on:
+      mongo-student:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks: [app-network]
+    restart: unless-stopped
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports: ["3003:3003"]
+    environment:
+      PORT: 3003
+      NODE_ENV: production
+      MONGO_URI: mongodb://mongo-notification:27017/notification_db
+      RABBITMQ_URL: amqp://admin:admin123@rabbitmq:5672
+    depends_on:
+      mongo-notification:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks: [app-network]
+    restart: unless-stopped
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports: ["3000:3000"]
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+      AUTH_SERVICE_URL: http://auth-service:3001
+      STUDENT_SERVICE_URL: http://student-service:3002
+      NOTIFICATION_SERVICE_URL: http://notification-service:3003
+      JWT_SECRET: super_secret_jwt_change_in_production_32chars
+      RATE_LIMIT_WINDOW_MS: 900000
+      RATE_LIMIT_MAX: 100
+      AUTH_RATE_LIMIT_MAX: 20
+    depends_on:
+      - auth-service
+      - student-service
+      - notification-service
+    networks: [app-network]
+    restart: unless-stopped
+
+volumes:
+  mongo-auth-data:
+  mongo-student-data:
+  mongo-notification-data:
+
+networks:
+  app-network:
+    driver: bridge
