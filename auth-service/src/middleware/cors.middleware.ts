@@ -1,4 +1,4 @@
-import { AppRequest, AppResponse, Next } from '../../shared-local/http';
+import { AppRequest, AppResponse, Next } from '../shared-local/http';
 
 export function cors(req: AppRequest, res: AppResponse, next: Next): void {
   res.setHeader('Access-Control-Allow-Origin', process.env.ALLOWED_ORIGINS || '*');

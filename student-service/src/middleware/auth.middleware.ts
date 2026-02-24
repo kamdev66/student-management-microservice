@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
-import { AppRequest, AppResponse, Next } from '../../shared-local/http';
-import { UnauthorizedError, ForbiddenError } from '../../shared-local/errors';
+import { AppRequest, AppResponse, Next } from '../shared-local/http';
+import { UnauthorizedError, ForbiddenError } from '../shared-local/errors';
 import { ENV } from '../config/env';
 
 export async function authenticate(req: AppRequest, _res: AppResponse, next: Next): Promise<void> {

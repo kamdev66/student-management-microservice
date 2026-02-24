@@ -1,20 +1,34 @@
 import jwt from 'jsonwebtoken';
-import { AppRequest, AppResponse, Next } from '../../shared-local/http';
-import { UnauthorizedError, ForbiddenError } from '../../shared-local/errors';
+import { AppRequest, AppResponse, Next } from '../shared-local/http';
+import { UnauthorizedError, ForbiddenError } from '../shared-local/errors';
 import { redisClient } from '../config/redis';
 import { ENV } from '../config/env';
 
-export async function authenticate(req: AppRequest, _res: AppResponse, next: Next):  Promise<void> {
+export async function authenticate(
+  req: AppRequest,
+  _res: AppResponse,
+  next: Next
+): Promise<void> {
   try {
+    console.log('ggggggggggggggggggg');
     const auth = req.headers['authorization'] as string;
     if (!auth?.startsWith('Bearer ')) return next(new UnauthorizedError());
+
     const token = auth.split(' ')[1];
+
+    // auth-service version also checks Redis blacklist
     const blacklisted = await redisClient.get(`bl:${token}`);
     if (blacklisted) return next(new UnauthorizedError('Token revoked'));
-    const payload = jwt.verify(token, ENV.JWT_SECRET) as { userId: string; email: string; role: string };
+
+    const payload = jwt.verify(token, ENV.JWT_SECRET) as { 
+      userId: string; 
+      email: string; 
+      role: string 
+    };
     req.user = payload;
     next();
-  } catch {
+  } catch(error) {
+    console.log('mmdmdmmm',error);
     next(new UnauthorizedError('Invalid or expired token'));
   }
 }

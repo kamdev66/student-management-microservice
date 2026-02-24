@@ -5,8 +5,8 @@ import { UserRole } from '../models/user.model';
 import { ENV } from '../config/env';
 import { redisClient } from '../config/redis';
 import { publishEvent } from '../config/rabbitmq';
-import { AppError, UnauthorizedError, ConflictError, NotFoundError, ForbiddenError } from '../../shared-local/errors';
-import { createLogger } from '../../shared-local/logger';
+import { AppError, UnauthorizedError, ConflictError, NotFoundError, ForbiddenError } from '../shared-local/errors';
+import { createLogger } from '../shared-local/logger';
 
 const logger = createLogger('auth-service');
 
@@ -87,6 +87,7 @@ export class AuthService {
   }
 
   async logout(userId: string, refreshToken: string): Promise<void> {
+    console.log('1111111111');
     await authRepository.removeRefreshToken(userId, refreshToken);
     await redisClient.setex(`bl:${refreshToken}`, 7 * 24 * 3600, '1');
     logger.info('User logged out', { userId });

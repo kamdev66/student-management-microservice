@@ -1,6 +1,6 @@
-import { AppRequest, AppResponse } from '../../shared-local/http';
-import { AppError } from '../../shared-local/errors';
-import { createLogger } from '../../shared-local/logger';
+import { AppRequest, AppResponse } from '../shared-local/http';
+import { AppError } from '../shared-local/errors';
+import { createLogger } from '../shared-local/logger';
 
 const logger = createLogger('error');
 

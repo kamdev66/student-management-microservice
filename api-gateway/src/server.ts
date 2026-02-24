@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import http from 'http';
-import { Application, Router } from '../shared-local/http';
+import { Application, Router } from './shared-local/http';
 import { ENV } from './config/env';
 import { proxyTo } from './proxy/proxy';
 import { rateLimit } from './middleware/rateLimit.middleware';
@@ -10,7 +10,7 @@ import { cors } from './middleware/cors.middleware';
 import { requestLogger } from './middleware/requestLogger.middleware';
 import { errorHandler } from './middleware/error.middleware';
 import { gatewaySwaggerSpec, swaggerHtml } from './utils/swagger';
-import { createLogger } from '../shared-local/logger';
+import { createLogger } from './shared-local/logger';
 
 const logger = createLogger('api-gateway');
 
@@ -50,9 +50,9 @@ const authPublicRouter = new Router();
 authPublicRouter.post('/api/v1/auth/register', authLimiter, proxyTo(AUTH_URL));
 authPublicRouter.post('/api/v1/auth/login',    authLimiter, proxyTo(AUTH_URL));
 authPublicRouter.post('/api/v1/auth/refresh',  proxyTo(AUTH_URL));
-authPublicRouter.post('/api/v1/auth/validate', proxyTo(AUTH_URL));
 
 const authProtectedRouter = new Router();
+authProtectedRouter.post('/api/v1/auth/validate', proxyTo(AUTH_URL));
 authProtectedRouter.post('/api/v1/auth/logout',     authenticate, proxyTo(AUTH_URL));
 authProtectedRouter.post('/api/v1/auth/logout-all', authenticate, proxyTo(AUTH_URL));
 authProtectedRouter.get('/api/v1/auth/profile',     authenticate, proxyTo(AUTH_URL));

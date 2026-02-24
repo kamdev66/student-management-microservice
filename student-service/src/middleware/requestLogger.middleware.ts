@@ -1,5 +1,5 @@
-import { AppRequest, AppResponse, Next } from '../../shared-local/http';
-import { createLogger } from '../../shared-local/logger';
+import { AppRequest, AppResponse, Next } from '../shared-local/http';
+import { createLogger } from '../shared-local/logger';
 
 const logger = createLogger('http');
 

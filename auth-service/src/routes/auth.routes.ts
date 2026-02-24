@@ -1,4 +1,4 @@
-import { Router, Next } from '../../shared-local/http';
+import { Router, Next } from '../shared-local/http';
 import { authController } from '../controllers/auth.controller';
 import { authenticate } from '../middleware/auth.middleware';
 

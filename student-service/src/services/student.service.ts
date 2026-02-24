@@ -1,9 +1,9 @@
 import { studentRepository, StudentFilter, PaginationOpts } from '../repositories/student.repository';
 import { IStudent } from '../models/student.model';
-import { ConflictError, NotFoundError } from '../../shared-local/errors';
+import { ConflictError, NotFoundError } from '../shared-local/errors';
 import { redisClient } from '../config/redis';
 import { publishEvent } from '../config/rabbitmq';
-import { createLogger } from '../../shared-local/logger';
+import { createLogger } from '../shared-local/logger';
 import { ENV } from '../config/env';
 
 const logger = createLogger('student-service');

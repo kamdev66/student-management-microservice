@@ -1,7 +1,7 @@
-import { AppRequest, AppResponse, success, created } from '../../shared-local/http';
+import { AppRequest, AppResponse, success, created } from '../shared-local/http';
 import { authService } from '../services/auth.service';
 import { validate, registerSchema, loginSchema, refreshSchema } from '../validators/auth.validator';
-import { ValidationError, UnauthorizedError } from '../../shared-local/errors';
+import { ValidationError, UnauthorizedError } from '../shared-local/errors';
 
 export class AuthController {
   async register(req: AppRequest, res: AppResponse): Promise<void> {
@@ -17,8 +17,6 @@ export class AuthController {
     const body = req.body as Record<string, unknown>;
     const { valid, errors, value } = validate(body, loginSchema);
     if (!valid) throw new ValidationError('Validation failed', errors);
-console.log('value',value.email )
-console.log('value22',value.password )
 
     const result = await authService.login(value.email as string, value.password as string);
     success(res, { user: result.user, tokens: result.tokens }, 'Login successful');
@@ -33,15 +31,20 @@ console.log('value22',value.password )
     success(res, { tokens }, 'Token refreshed successfully');
   }
 
-  async logout(req: AppRequest, res: AppResponse): Promise<void> {
-    const body = req.body as Record<string, unknown>;
-    const { valid, errors, value } = validate(body, refreshSchema);
-    if (!valid) throw new ValidationError('Validation failed', errors);
-    if (!req.user?.userId) throw new UnauthorizedError();
+ async logout(req: AppRequest, res: AppResponse): Promise<void> {
+  console.log('Logout hit');
 
-    await authService.logout(req.user.userId, value.refreshToken as string);
-    success(res, null, 'Logged out successfully');
+  if (!req.user?.userId) {
+    throw new UnauthorizedError();
   }
+  const auth = req.headers['authorization'] as string;
+  if (!auth?.startsWith('Bearer ')) {
+    throw new UnauthorizedError('Authorization header required');
+  }
+  const accessToken = auth.split(' ')[1];
+  await authService.logout(req.user.userId, accessToken);
+  success(res, null, 'Logged out successfully');
+}
 
   async logoutAll(req: AppRequest, res: AppResponse): Promise<void> {
     if (!req.user?.userId) throw new UnauthorizedError();
@@ -56,11 +59,13 @@ console.log('value22',value.password )
   }
 
   async validate(req: AppRequest, res: AppResponse): Promise<void> {
-    const body = req.body as Record<string, unknown>;
-    if (!body?.token) throw new ValidationError('Token required');
-    const payload = await authService.validateToken(body.token as string);
-    success(res, { payload });
-  }
+  const auth = req.headers['authorization'] as string;
+  if (!auth?.startsWith('Bearer ')) throw new ValidationError('Authorization header required');
+  
+  const token = auth.split(' ')[1];
+  const payload = await authService.validateToken(token);
+  success(res, { payload });
+}
 }
 
 export const authController = new AuthController();

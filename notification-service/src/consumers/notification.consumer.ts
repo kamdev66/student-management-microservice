@@ -2,7 +2,7 @@ import amqplib from 'amqplib';
 import type { Channel, ChannelModel, ConsumeMessage } from 'amqplib';
 import { Notification, NotificationStatus, NotificationType } from '../models/notification.model';
 import { emailService } from '../services/email.service';
-import { createLogger } from '../../shared-local/logger';
+import { createLogger } from '../shared-local/logger';
 import { ENV } from '../config/env';
 
 const logger = createLogger('notification-consumer');

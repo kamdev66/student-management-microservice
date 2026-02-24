@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { ENV } from './env';
-import { createLogger } from '../../shared-local/logger';
+import { createLogger } from '../shared-local/logger';
 
 const logger = createLogger('auth-db');
 

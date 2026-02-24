@@ -1,5 +1,5 @@
-import { AppRequest, AppResponse, Next } from '../../shared-local/http';
-import { TooManyRequestsError } from '../../shared-local/errors';
+import { AppRequest, AppResponse, Next } from '../shared-local/http';
+import { TooManyRequestsError } from '../shared-local/errors';
 
 interface RateLimitRecord { count: number; resetAt: number }
 const store = new Map<string, RateLimitRecord>();

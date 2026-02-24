@@ -23,6 +23,7 @@ export class AuthRepository {
   }
 
   removeRefreshToken(userId: string, token: string): Promise<unknown> {
+    console.log('kkkkkkkkkk');
     return User.findByIdAndUpdate(userId, { $pull: { refreshTokens: token } });
   }
 

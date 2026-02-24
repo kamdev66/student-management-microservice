@@ -1,4 +1,4 @@
-import { AppRequest, AppResponse, Next } from '../../shared-local/http';
+import { AppRequest, AppResponse, Next } from '../shared-local/http';
 
 export function securityHeaders(_req: AppRequest, res: AppResponse, next: Next): void {
   res.setHeader('X-Content-Type-Options', 'nosniff');

@@ -1,4 +1,4 @@
-import { createLogger } from '../../shared-local/logger';
+import { createLogger } from '../shared-local/logger';
 import { ENV } from '../config/env';
 const logger = createLogger('email-service');
 interface EmailOpts { to: string; subject: string; html: string; text: string }

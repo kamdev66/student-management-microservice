@@ -2,7 +2,7 @@ import amqplib from 'amqplib';
 import type { Channel, ChannelModel } from 'amqplib';
 import { v4 as uuidv4 } from 'uuid';
 import { ENV } from './env';
-import { createLogger } from '../../shared-local/logger';
+import { createLogger } from '../shared-local/logger';
 
 const logger = createLogger('student-rabbitmq');
 const EXCHANGE = 'student_management';

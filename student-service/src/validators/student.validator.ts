@@ -1,4 +1,4 @@
-import { Schema } from '../../shared-local/validator';
+import { Schema } from '../shared-local/validator';
 
 export const createStudentSchema: Schema = {
   firstName:        { type: 'string', required: true, minLength: 2, maxLength: 50, trim: true },

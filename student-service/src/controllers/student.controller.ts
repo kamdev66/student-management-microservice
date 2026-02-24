@@ -1,8 +1,8 @@
-import { AppRequest, AppResponse, success, created } from '../../shared-local/http';
+import { AppRequest, AppResponse, success, created } from '../shared-local/http';
 import { studentService } from '../services/student.service';
-import { validate } from '../../shared-local/validator';
+import { validate } from '../shared-local/validator';
 import { createStudentSchema, updateStudentSchema, querySchema } from '../validators/student.validator';
-import { ValidationError, NotFoundError } from '../../shared-local/errors';
+import { ValidationError, NotFoundError } from '../shared-local/errors';
 
 export class StudentController {
   async create(req: AppRequest, res: AppResponse): Promise<void> {

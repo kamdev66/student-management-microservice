@@ -1,4 +1,4 @@
-import { validate, Schema } from '../../shared-local/validator';
+import { validate, Schema } from '../shared-local/validator';
 import { UserRole } from '../models/user.model';
 
 const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;

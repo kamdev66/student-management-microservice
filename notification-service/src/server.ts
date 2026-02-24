@@ -1,13 +1,13 @@
 import 'dotenv/config';
 import http from 'http';
-import { Application, Router } from '../shared-local/http';
+import { Application, Router } from './shared-local/http';
 import { connectDatabase } from './config/database';
 import { startConsumer } from './consumers/notification.consumer';
 import { Notification } from './models/notification.model';
 import { errorHandler } from './middleware/error.middleware';
 import { cors } from './middleware/cors.middleware';
 import { ENV } from './config/env';
-import { createLogger } from '../shared-local/logger';
+import { createLogger } from './shared-local/logger';
 
 const logger = createLogger('notification-server');
 

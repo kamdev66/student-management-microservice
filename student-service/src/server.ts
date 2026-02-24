@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import http from 'http';
-import { Application, Router } from '../shared-local/http';
+import { Application, Router } from './shared-local/http';
 import { connectDatabase } from './config/database';
 import { connectRedis } from './config/redis';
 import { connectRabbitMQ } from './config/rabbitmq';
@@ -10,7 +10,7 @@ import { requestLogger } from './middleware/requestLogger.middleware';
 import { cors } from './middleware/cors.middleware';
 import { securityHeaders } from './middleware/security.middleware';
 import { ENV } from './config/env';
-import { createLogger } from '../shared-local/logger';
+import { createLogger } from './shared-local/logger';
 
 const logger = createLogger('student-server');
 

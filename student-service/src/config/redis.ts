@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
 import { ENV } from './env';
-import { createLogger } from '../../shared-local/logger';
+import { createLogger } from '../shared-local/logger';
 
 const logger = createLogger('student-redis');
 export let redisClient: Redis;

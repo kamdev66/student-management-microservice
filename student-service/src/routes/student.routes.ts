@@ -1,4 +1,4 @@
-import { Router } from '../../shared-local/http';
+import { Router } from '../shared-local/http';
 import { studentController } from '../controllers/student.controller';
 import { authenticate, authorize } from '../middleware/auth.middleware';
 
